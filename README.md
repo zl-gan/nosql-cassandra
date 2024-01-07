@@ -54,14 +54,17 @@ The following steps were executed to construct a data table and populate it with
 
 1)	The following command is executed in CQLSH to create a new table. 
 > CREATE TABLE crime("ID" int PRIMARY KEY, "Case Number" varchar, "Date" timestamp, "Block" varchar, "IUCR" varchar, "Primary Type" varchar, "Description" varchar, "Location Description" varchar, "Arrest" boolean, "Domestic" boolean, "Beat" int, "District" int, "Ward" int, "Community Area" int, "FBI Code" varchar, "X Coordinate" decimal, "Y Coordinate" decimal, "Year" int, "Updated On" timestamp,"Latitude" decimal, "Longitude" decimal, "Location" varchar);
+
 2)	Execute the following command to verify the creation of the table. A blank table with only the column name will be printed as shown in Fig. 4. 
 > SELECT * FROM crime;
  ![Picture4](https://github.com/zl-gan/nosql-cassandra/assets/69247135/23403e97-501d-45d7-929b-923c9ec33901)
-Fig. 4	Blank data table output from newly created table. 
+Fig. 4	Blank data table output from newly created table.
+
 3)	Populate the data table by copying the csv file to the data table using the following code. The processing time will be shown at the end of the process as shown in Fig. 5. 
 > COPY crimes("ID", "Case Number", "Date", "Block", "IUCR", "Primary Type", "Description", "Location Description", "Arrest", "Domestic", "Beat", "District", "Ward", "Community Area", "FBI Code", "X Coordinate", "Y Coordinate", "Year", "Updated On", "Latitude", "Longitude", "Location") FROM 'C:\Cassandra\crimes.csv' WITH NULL='null' and DELIMITER=',' AND HEADER=TRUE AND DATETIMEFORMAT='%m/%d/%Y %H:%M:%S %p';
  ![Picture5](https://github.com/zl-gan/nosql-cassandra/assets/69247135/387fa19d-0b8d-42ab-b919-d48e6a7ff4d7)
-Fig. 5	Output message from CQLSH after successfully ingesting the CSV file to data table. 
+Fig. 5	Output message from CQLSH after successfully ingesting the CSV file to data table.
+
 4)	Two materialized view are created in order to assist with querying process, particularly for those queries which involves aggregation operation GROUP BY. The codes used were as follow. 
 > CREATE MATERIALIZED VIEW arrests AS SELECT "ID", "Year", "Case Number", "Arrest" from crime WHERE "Year" IS NOT NULL AND "Case Number" IS NOT NULL AND "Arrest" IS NOT NULL PRIMARY KEY ("ID", "Year"); 
 > CREATE MATERIALIZED VIEW crime_by_location AS SELECT "Location Description", "Primary Type", "Year", "Case Number" from crime WHERE "Location Description" IS NOT NULL AND "ID" IS NOT NULL PRIMARY KEY ("Location Description", "ID");
@@ -82,6 +85,7 @@ Five sample queries were made to obtain relevant insights from the data table. T
 >`SELECT count(*) FROM crime WHERE "Primary Type"='THEFT' and "Location Description"='RESIDENCE' and "Arrest"= True and "Year"=2010 ALLOW FILTERING;`
 
 **Sample Video**
+
 https://github.com/zl-gan/nosql-cassandra/assets/69247135/9d281bd7-e18d-4e83-a8d0-aaa42cbaedb2
 
 ## Lessons Learned
