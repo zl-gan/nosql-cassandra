@@ -72,7 +72,7 @@ The following steps were executed to construct a data table and populate it with
 > CREATE MATERIALIZED VIEW crime_by_location AS SELECT "Location Description", "Primary Type", "Year", "Case Number" from crime WHERE "Location Description" IS NOT NULL AND "ID" IS NOT NULL PRIMARY KEY ("Location Description", "ID");
 
 ### Queries
-Data query can be performed in python using the cassandra library. Please visit the attached Jupyter notebook for the code. 
+Data query can be performed in python using the cassandra library. Please visit the attached [Jupyter notebook](https://github.com/zl-gan/nosql-cassandra/blob/main/Cassandra.ipynb) for the code. 
 
 Five sample queries were made to obtain relevant insights from the data table. The queries made and executed in order were as follow. 
 1)	Number of arrested crimes by year
