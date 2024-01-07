@@ -20,19 +20,19 @@ The following are the steps to install Cassandra on you local Windows PC.
 2)	Install the Java SE Development Kit. 
 3)	Configure the environment variable for Java. 
 Define JAVA_HOME as the system variable with the directory of Java as its variable value. \
- ![Picture1](https://github.com/zl-gan/nosql-cassandra/assets/69247135/da31dee0-f8aa-44a5-a21c-06fba2a3e47e) \
+![Picture1](https://github.com/zl-gan/nosql-cassandra/assets/69247135/52929a71-d345-44cc-9693-3d32e99e4276)\
 *Fig. 1	Configuring the environment variable for Java*
 4)	Download Apache Cassandra version 3.11.11 from this [link](https://www.apache.org/dyn/closer.lua/cassandra/4.0.1/apache-cassandra-4.0.1-bin.tar.gz). 
 5)	Unzip the compressed file to local directory. (C:\Casssandra)
 6)	Configure the environment variable for Cassandra. \
-![Picture2](https://github.com/zl-gan/nosql-cassandra/assets/69247135/8c73c3ab-0a94-4b1c-b3ad-bc034156f7c7) \
+![Picture2](https://github.com/zl-gan/nosql-cassandra/assets/69247135/6f6a4c36-f456-4618-9356-8cd6eb91e9a3)\
 *Fig. 2	Configuring environmental variable for Cassandra*
 7)	Download Python (version 2.7.18) from this [link](https://www.python.org/downloads/release/python-2718/). 
 8)	Install Python (version 2.7.18) on local machine. 
 9)	Add environment variable for Python.
 10)	Rename sigar-amd64-winnt.dll from C:\Cassandra\apache-cassandra-3.11.11\lib\sigar-bin to sigar-amd64-winntt.dll to prevent execution failure. 
 11)	Modify the cqlsh.py file from Cassandra bin folder (C:\Cassandra\apache-cassandra-3.11.11\bin\). Change the parameter DEFAULT_REQUEST_TIMEOUT_SECONDS from 10 to 1000s as shown in Fig. 20. This is to prevent any timeout from occurring when querying the data. \
-![Picture3](https://github.com/zl-gan/nosql-cassandra/assets/69247135/2a672bab-9e55-4635-9c3d-d781b42dbec9) \
+![Picture3](https://github.com/zl-gan/nosql-cassandra/assets/69247135/eddfbc9c-2e5c-4d70-8caf-4713bf823b70)\
 *Fig. 3	Modifying DEFAULT_REQUEST_TIMEOUT_SECONDS from 10 to 1000*
 12)	Modify the cassandra.yaml file from Cassandra conf folder (C:\Cassandra\apache-cassandra-3.11.11\conf). Change the parameter tombstone_warn_threshold and tombstone_failure_threshold from 1000 and 100000 to 100000 and 10000000 respectively to prevent ReadTimeout error when querying using cassandra-driver on Python. 
 
@@ -57,13 +57,15 @@ The following steps were executed to construct a data table and populate it with
 
 2)	Execute the following command to verify the creation of the table. A blank table with only the column name will be printed as shown in Fig. 4. 
 > SELECT * FROM crime;
- ![Picture4](https://github.com/zl-gan/nosql-cassandra/assets/69247135/23403e97-501d-45d7-929b-923c9ec33901)
-Fig. 4	Blank data table output from newly created table.
+
+![Picture4](https://github.com/zl-gan/nosql-cassandra/assets/69247135/01254193-b295-4d9c-ad5a-ae176fe9a019)\
+*Fig. 4	Blank data table output from newly created table.*
 
 3)	Populate the data table by copying the csv file to the data table using the following code. The processing time will be shown at the end of the process as shown in Fig. 5. 
 > COPY crimes("ID", "Case Number", "Date", "Block", "IUCR", "Primary Type", "Description", "Location Description", "Arrest", "Domestic", "Beat", "District", "Ward", "Community Area", "FBI Code", "X Coordinate", "Y Coordinate", "Year", "Updated On", "Latitude", "Longitude", "Location") FROM 'C:\Cassandra\crimes.csv' WITH NULL='null' and DELIMITER=',' AND HEADER=TRUE AND DATETIMEFORMAT='%m/%d/%Y %H:%M:%S %p';
- ![Picture5](https://github.com/zl-gan/nosql-cassandra/assets/69247135/387fa19d-0b8d-42ab-b919-d48e6a7ff4d7)
-Fig. 5	Output message from CQLSH after successfully ingesting the CSV file to data table.
+
+![Picture5](https://github.com/zl-gan/nosql-cassandra/assets/69247135/c74d0964-2598-4548-aaac-9ea20ec47411)\
+*Fig. 5	Output message from CQLSH after successfully ingesting the CSV file to data table.*
 
 4)	Two materialized view are created in order to assist with querying process, particularly for those queries which involves aggregation operation GROUP BY. The codes used were as follow. 
 > CREATE MATERIALIZED VIEW arrests AS SELECT "ID", "Year", "Case Number", "Arrest" from crime WHERE "Year" IS NOT NULL AND "Case Number" IS NOT NULL AND "Arrest" IS NOT NULL PRIMARY KEY ("ID", "Year"); 
